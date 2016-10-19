@@ -1,4 +1,4 @@
-FROM richardkdrew/node-java
+FROM node:slim
 
 MAINTAINER Shawn Seymour <seymo079@morris.umn.edu>
 MAINTAINER Dan Stelljes <stell124@morris.umn.edu>
@@ -7,12 +7,24 @@ MAINTAINER Dan Stelljes <stell124@morris.umn.edu>
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Copy our files and install node dependencies
-COPY package.json /usr/src/app
-RUN npm install
-RUN npm install -g protractor
-RUN webdriver-manager update
-COPY functional/. /usr/src/app/functional
+# Setup our environment
+RUN npm install -g protractor mocha jasmine && \
+    webdriver-manager update && \
+    apt-get update && \
+    apt-get install -y xvfb wget openjdk-7-jre && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg --unpack google-chrome-stable_current_amd64.deb && \
+    apt-get install -f -y && \
+    apt-get clean && \
+    rm google-chrome-stable_current_amd64.deb && \
+    mkdir /protractor
 
-# Run our tests
-CMD ["npm", "run", "func"]
+# Copy our files over
+COPY functional/. /usr/src/app/functional
+RUN chmod +x functional/protractor.sh
+
+# Fix for the issue with Selenium, as described here:
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
+CMD ["./functional/protractor.sh", "functional/conf.js"]
