@@ -4,7 +4,7 @@
   "description": "Project for running tests within a docker container",
   "main": "functions.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start unit/karma.conf.js"
+    "unit": "./node_modules/karma/bin/karma start unit/karma.conf.js"
   },
   "repository": {
     "type": "git",

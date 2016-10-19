@@ -1,0 +1,17 @@
+FROM node:argon
+
+MAINTAINER Shawn Seymour <seymo079@morris.umn.edu>
+MAINTAINER Dan Stelljes <stell124@morris.umn.edu>
+
+# Create our application directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+
+# Copy our files and install node dependencies
+COPY package.json /usr/src/app
+RUN npm install
+COPY unit/. /usr/src/app/unit
+
+# Run our tests
+CMD ["npm", "run", "unit"]
