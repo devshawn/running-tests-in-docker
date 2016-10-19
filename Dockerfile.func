@@ -1,0 +1,18 @@
+FROM richardkdrew/node-java
+
+MAINTAINER Shawn Seymour <seymo079@morris.umn.edu>
+MAINTAINER Dan Stelljes <stell124@morris.umn.edu>
+
+# Create our application directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Copy our files and install node dependencies
+COPY package.json /usr/src/app
+RUN npm install
+RUN npm install -g protractor
+RUN webdriver-manager update
+COPY functional/. /usr/src/app/functional
+
+# Run our tests
+CMD ["npm", "run", "func"]
